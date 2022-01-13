@@ -1,0 +1,1 @@
+# free-azure-trial
