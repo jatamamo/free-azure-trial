@@ -2,18 +2,34 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "environment": {
+            "type": "string",
+            "allowedValues": [
+                "dev",
+                "q&a",
+                "pro"
+            ],
+            "defaultValue": "pre"
+        },
         "storageName": {
             "type": "string",
             "minLength": 3,
             "maxLength": 24,
             "metadata" : {
-                "description": "Enter a Name for the Storage Account."
+                "description": "Unique DNS Name for the Storage Account."
+            }
+        },
+        "RG_Location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Data center for the resource location."
             }
         },
         "storageSKU": {
             "type": "string",
             "metadata": {
-                "description": "description"
+                "description": "Approved SKUs for deployment."
             },
             "allowedValues": [
                 "Standard_LRS",
@@ -29,18 +45,37 @@
         }
     },
     "functions": [],
-    "variables": {},
+    "variables": {
+        "accountName": "[concat(parameters('environment'),parameters('storageName'),uniqueString(resourceGroup().id))]"
+    },
     "resources": [
         {
-            "name": "[parameters('storageName')]",
+            "name": "[variables('accountName')]",
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2021-06-01",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('RG_Location')]",
             "kind": "StorageV2",
             "sku": {
                 "name": "[parameters('storageSKU')]"
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "RG": {
+            "value": "[resourceGroup().id]",
+            "type": "string"
+        },
+        "uniqueStringRG": {
+            "value": "[uniqueString(resourceGroup().id)]",
+            "type": "string"
+        },
+        "DeploymentName": {
+            "value": "[deployment().name]",
+            "type": "string"
+        },
+        "uniqueStringDeploymentName": {
+            "value": "[uniqueString(deployment().name)]",
+            "type": "string"
+        }
+    }
 }
