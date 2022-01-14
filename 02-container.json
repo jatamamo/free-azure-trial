@@ -57,19 +57,21 @@
             "kind": "StorageV2",
             "sku": {
                 "name": "[parameters('storageSKU')]"
-            }
-        },
-    {
-        "name": "[concat(variables('accountName'),'/default/input')]",
-        "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-        "apiVersion": "2021-04-01",
-        "dependsOn": [
-            "[resourceId('Microsoft.Storage/storageAccounts', variables('accountName'))]"
-        ],
-        "properties": {
-            "publicAccess": "None"
+            },
+            "resources": [
+                {
+                    "name": "/default/output",
+                    "type": "blobServices/containers",
+                    "apiVersion": "2021-04-01",
+                    "dependsOn": [
+                        "[variables('accountName')]"
+                    ],
+                    "properties": {
+                        "publicAccess": "None"
+                    }
+                }
+            ]
         }
-    }
     ],
     "outputs": {}
 }
